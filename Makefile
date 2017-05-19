@@ -1,13 +1,21 @@
+saxonhejar=/usr/share/java/Saxon-HE.jar
+xsltclass=net.sf.saxon.Transform
+
+xcb_h=xcb/xcb.h
+
 all: xcb.so
 
 clean:
-	rm -f xcb.xml xcb.stub xcb.c xcb.so
+	rm -f xcb.xml xcb.stub xcb.c xcb.so xcb.h%
 
 xcb.xml:
-	echo '#include <xcb/xcb.h>' | gccxml - -fxml=$@
+	echo '#include <$(xcb_h)>' | gccxml - -fxml=$@
 
-xcb.stub: xcb.xml
-	bash xcb.bash $< > $@
+xcb.h%:
+	echo '#include <$(xcb_h)>' | gcc -E - >$@
+
+xcb.stub: xcb.xml xcb.xslt
+	java -cp $(saxonhejar) $(xsltclass) -s:$(filter %.xml,$^) -xsl:$(filter %.xslt,$^) -o:$@
 
 xcb.c: xcb.stub
 	chibi-ffi $<
