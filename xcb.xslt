@@ -146,6 +146,10 @@
 						<xsl:text>int</xsl:text>
 					</xsl:when>
 
+					<xsl:when test="$type/@name = 'void'">
+						<xsl:text>void</xsl:text>
+					</xsl:when>
+
 					<xsl:otherwise>
 						<xsl:text>[</xsl:text>
 							<xsl:value-of select="$type/@name"/>
