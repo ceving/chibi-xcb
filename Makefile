@@ -3,10 +3,13 @@ xsltclass=net.sf.saxon.Transform
 
 xcb_h=xcb/xcb.h
 
-all: xcb.so
+all: xcb.so xcb.sld
 
 clean:
-	rm -f xcb.xml xcb.stub xcb.c xcb.so xcb.h%
+	rm -f xcb.c xcb.so xcb.h%
+
+devel-clean: clean
+	rm -f xcb.xml xcb.stub xcb.sld
 
 xcb.xml:
 	echo '#include <$(xcb_h)>' | gccxml - -fxml=$@
@@ -22,3 +25,6 @@ xcb.c: xcb.stub
 
 xcb.so: xcb.c
 	gcc -g -o $@ -fPIC -shared $< -lchibi-scheme
+
+xcb.sld: xcb.stub stub2sld.scm
+	chibi-scheme -m 'scheme base' stub2sld.scm < $< > $@
